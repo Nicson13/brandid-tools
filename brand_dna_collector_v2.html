@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrandDNA Collector · Brandid</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink: #1a1a1a;
+    --ink-2: #4a4a4a;
+    --ink-3: #888;
+    --paper: #faf9f6;
+    --paper-2: #f2f0eb;
+    --paper-3: #e8e4dc;
+    --accent: #2d5a3d;
+    --accent-light: #e8f0eb;
+    --accent-mid: #4a8c5c;
+    --warn: #c9450a;
+    --border: #d4cfc5;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--ink);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    color: #fff;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+  }
+  .logo span { color: #7ec898; }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── Hero ── */
+  .hero { margin-bottom: 48px; }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent-mid); }
+  .hero p { color: var(--ink-2); font-size: 15px; max-width: 520px; }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--paper-3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-3);
+    white-space: nowrap;
+    min-width: 64px;
+    text-align: right;
+  }
+
+  /* ── Question card ── */
+  .q-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .q-card:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
+  }
+  .q-num {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 6px;
+  }
+  .q-label {
+    font-family: 'DM Serif Display', serif;
+    font-size: 19px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .q-hint {
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .q-card textarea,
+  .q-card input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--paper);
+    resize: vertical;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+    line-height: 1.6;
+  }
+  .q-card textarea:focus,
+  .q-card input[type="text"]:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+  .q-card textarea { min-height: 90px; }
+
+  /* 下拉 / 单选 */
+  .select-wrap { position: relative; }
+  .select-wrap select {
+    width: 100%;
+    padding: 12px 36px 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--paper);
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .select-wrap select:focus { border-color: var(--accent); }
+  .select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--ink-3);
+    font-size: 12px;
+  }
+
+  /* 复选框 pills */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .pill-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink-2);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .pill-label:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .pill-label input { display: none; }
+  .pill-label.checked {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── Divider ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 36px 0 28px;
+  }
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  /* ── Export buttons ── */
+  .export-section {
+    margin-top: 48px;
+    background: var(--ink);
+    border-radius: 16px;
+    padding: 32px;
+    color: #fff;
+  }
+  .export-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .export-section p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .export-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+    text-decoration: none;
+  }
+  .btn-json {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-json:hover { background: #225030; transform: translateY(-1px); }
+  .btn-csv {
+    background: rgba(255,255,255,0.1);
+    color: #ccc;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-csv:hover { background: rgba(255,255,255,0.18); color: #fff; }
+  .btn-reset {
+    background: transparent;
+    color: #666;
+    border: 1px solid #333;
+  }
+  .btn-reset:hover { color: #999; border-color: #555; }
+  .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--accent);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── JSON preview ── */
+  .json-preview {
+    margin-top: 24px;
+    background: #0f1a13;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    display: none;
+  }
+  .json-preview pre {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #7ec898;
+    white-space: pre;
+  }
+  .json-preview.visible { display: block; }
+  .preview-toggle {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 12px;
+  }
+  .preview-toggle:hover { color: #bbb; border-color: #666; }
+
+  @media (max-width: 600px) {
+    .container { padding: 32px 20px 60px; }
+    .site-header { padding: 16px 20px; }
+    .hero h1 { font-size: 28px; }
+    .q-card { padding: 22px 20px; }
+    .export-section { padding: 24px 20px; }
+    .export-btns { flex-direction: column; }
+    .btn { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">brand<span>id</span></div>
+  <div class="badge">BrandDNA Collector</div>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <h1>了解你的品牌，<em>才能讲好你的故事</em></h1>
+    <p>填写以下12个问题，帮助我们建立品牌档案。完成后导出 JSON 文件，用于提案生成流程。</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">0 / 12</div>
+  </div>
+
+  <!-- Section 1: 基础信息 -->
+  <div class="section-divider">
+    <hr><span class="section-title">品牌基础</span><hr>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card">
+    <div class="q-num">问题 01</div>
+    <div class="q-label">品牌名称与所在行业</div>
+    <div class="q-hint">请填写完整品牌名称，以及所属行业类别（如：餐饮、美妆、SaaS、服装等）</div>
+    <input type="text" id="q1" placeholder="例：清颜 · 天然护肤品牌 · 美妆行业" oninput="updateProgress()">
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card">
+    <div class="q-num">问题 02</div>
+    <div class="q-label">品牌创立背景</div>
+    <div class="q-hint">这个品牌是怎么来的？创始人的初衷是什么？有什么故事？</div>
+    <textarea id="q2" placeholder="例：创始人因为找不到适合敏感肌的天然护肤品，决定自己研发……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card">
+    <div class="q-num">问题 03</div>
+    <div class="q-label">品牌目前的发展阶段</div>
+    <div class="q-hint">了解阶段有助于我们设定合适的营销策略重心</div>
+    <div class="select-wrap">
+      <select id="q3" onchange="updateProgress()">
+        <option value="">请选择…</option>
+        <option value="startup">初创期（产品刚上线，用户 < 1000）</option>
+        <option value="growth">成长期（有稳定客群，需扩大影响力）</option>
+        <option value="expansion">扩张期（准备进入新市场或新渠道）</option>
+        <option value="mature">成熟期（品牌已建立，维持与深化阶段）</option>
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>
+  </div>
+
+  <!-- Section 2: 受众与竞争 -->
+  <div class="section-divider">
+    <hr><span class="section-title">受众与竞争</span><hr>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card">
+    <div class="q-num">问题 04</div>
+    <div class="q-label">目标客群画像</div>
+    <div class="q-hint">描述你的核心用户：年龄、性别、职业、消费习惯、痛点、在哪些平台活跃</div>
+    <textarea id="q4" placeholder="例：25–35岁女性，职场白领，月收入1万+，注重成分，爱刷小红书……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card">
+    <div class="q-num">问题 05</div>
+    <div class="q-label">主要竞品与差异化</div>
+    <div class="q-hint">你的竞争对手是谁？你比他们好在哪里？客户为什么选你不选他？</div>
+    <textarea id="q5" placeholder="例：竞品有悦木之源、科颜氏，我们的差异是完全无防腐剂+植物活性成分……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Section 3: 品牌定位 -->
+  <div class="section-divider">
+    <hr><span class="section-title">品牌定位</span><hr>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card">
+    <div class="q-num">问题 06</div>
+    <div class="q-label">品牌个性与沟通口吻</div>
+    <div class="q-hint">如果品牌是一个人，他/她是什么性格？选择最贴近的风格</div>
+    <div class="pill-group" id="q6-pills">
+      <label class="pill-label"><input type="checkbox" value="professional" onchange="updatePills(this,'q6');updateProgress()"> 专业权威</label>
+      <label class="pill-label"><input type="checkbox" value="warm" onchange="updatePills(this,'q6');updateProgress()"> 温暖亲切</label>
+      <label class="pill-label"><input type="checkbox" value="playful" onchange="updatePills(this,'q6');updateProgress()"> 活泼有趣</label>
+      <label class="pill-label"><input type="checkbox" value="minimalist" onchange="updatePills(this,'q6');updateProgress()"> 简约高级</label>
+      <label class="pill-label"><input type="checkbox" value="bold" onchange="updatePills(this,'q6');updateProgress()"> 大胆前卫</label>
+      <label class="pill-label"><input type="checkbox" value="eco" onchange="updatePills(this,'q6');updateProgress()"> 自然环保</label>
+      <label class="pill-label"><input type="checkbox" value="luxury" onchange="updatePills(this,'q6');updateProgress()"> 奢华精致</label>
+      <label class="pill-label"><input type="checkbox" value="tech" onchange="updatePills(this,'q6');updateProgress()"> 科技感</label>
+    </div>
+    <input type="text" id="q6-custom" placeholder="补充其他关键词…" style="margin-top:12px" oninput="updateProgress()">
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card">
+    <div class="q-num">问题 07</div>
+    <div class="q-label">品牌使命</div>
+    <div class="q-hint">品牌存在的意义是什么？用一到两句话说出你们想为世界做的事</div>
+    <textarea id="q7" placeholder="例：让每个人都能用上真正有效、无害的护肤品，不被成分噱头欺骗……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card">
+    <div class="q-num">问题 08</div>
+    <div class="q-label">品牌愿景</div>
+    <div class="q-hint">5年后，你希望这个品牌成为什么？在市场中占有什么位置？</div>
+    <textarea id="q8" placeholder="例：成为华人圈天然护肤的代名词，在东南亚开设5家旗舰店……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card">
+    <div class="q-num">问题 09</div>
+    <div class="q-label">核心产品优势</div>
+    <div class="q-hint">你们最值得骄傲的产品或服务特点是什么？（功能、材质、工艺、价格、体验等）</div>
+    <textarea id="q9" placeholder="例：专利萃取技术、成分表公开透明、1000人真实测评、30天无理由退换……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Section 4: 营销方向 -->
+  <div class="section-divider">
+    <hr><span class="section-title">营销方向</span><hr>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card">
+    <div class="q-num">问题 10</div>
+    <div class="q-label">主要营销渠道</div>
+    <div class="q-hint">目前在哪些平台活跃？未来希望重点投入哪些渠道？</div>
+    <div class="pill-group" id="q10-pills">
+      <label class="pill-label"><input type="checkbox" value="instagram" onchange="updatePills(this,'q10');updateProgress()"> Instagram</label>
+      <label class="pill-label"><input type="checkbox" value="tiktok" onchange="updatePills(this,'q10');updateProgress()"> TikTok</label>
+      <label class="pill-label"><input type="checkbox" value="xiaohongshu" onchange="updatePills(this,'q10');updateProgress()"> 小红书</label>
+      <label class="pill-label"><input type="checkbox" value="facebook" onchange="updatePills(this,'q10');updateProgress()"> Facebook</label>
+      <label class="pill-label"><input type="checkbox" value="youtube" onchange="updatePills(this,'q10');updateProgress()"> YouTube</label>
+      <label class="pill-label"><input type="checkbox" value="linkedin" onchange="updatePills(this,'q10');updateProgress()"> LinkedIn</label>
+      <label class="pill-label"><input type="checkbox" value="wechat" onchange="updatePills(this,'q10');updateProgress()"> 微信</label>
+      <label class="pill-label"><input type="checkbox" value="email" onchange="updatePills(this,'q10');updateProgress()"> EDM邮件</label>
+    </div>
+    <input type="text" id="q10-custom" placeholder="其他渠道…" style="margin-top:12px" oninput="updateProgress()">
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-card">
+    <div class="q-num">问题 11</div>
+    <div class="q-label">已验证的内容方向</div>
+    <div class="q-hint">过去做过的内容中，哪些反响最好？什么类型的帖子收到最多互动或转化？</div>
+    <textarea id="q11" placeholder="例：产品原料故事类 Reels 平均播放量是其他内容的3倍；用户UGC转发效果最好……" oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-card">
+    <div class="q-num">问题 12</div>
+    <div class="q-label">首要营销目标（本季度）</div>
+    <div class="q-hint">这次合作最想达成的一个核心目标是什么？</div>
+    <div class="select-wrap">
+      <select id="q12" onchange="updateProgress()">
+        <option value="">请选择…</option>
+        <option value="awareness">品牌曝光（让更多人知道这个品牌）</option>
+        <option value="engagement">互动增长（增加粉丝黏性与参与度）</option>
+        <option value="leadgen">获客转化（收集潜在客户，推动购买）</option>
+        <option value="community">社群建立（建立品牌忠实用户圈）</option>
+        <option value="launch">新品上线（为新产品造势预热）</option>
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>
+  </div>
+
+  <!-- Export Section -->
+  <div class="export-section">
+    <h2>导出品牌档案</h2>
+    <p>填写完成后，导出 JSON 文件用于 Proposal Builder；CSV 文件用于存档或 Excel 查看。<br>JSON 格式已与 Proposal Builder 字段对齐，可直接导入使用。</p>
+    <div class="export-btns">
+      <button class="btn btn-json" onclick="exportJSON()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        导出 brand.json
+      </button>
+      <button class="btn btn-csv" onclick="exportCSV()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        导出 CSV（存档）
+      </button>
+      <button class="preview-toggle" onclick="togglePreview()">预览 JSON 结构</button>
+      <button class="btn btn-reset" onclick="resetForm()">重置表单</button>
+    </div>
+    <div class="json-preview" id="jsonPreview">
+      <pre id="jsonPreviewContent"></pre>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Pill toggle ──
+function updatePills(checkbox, groupId) {
+  const label = checkbox.closest('.pill-label');
+  if (checkbox.checked) {
+    label.classList.add('checked');
+  } else {
+    label.classList.remove('checked');
+  }
+}
+
+// ── Progress ──
+function updateProgress() {
+  let filled = 0;
+  const checks = [
+    () => document.getElementById('q1').value.trim(),
+    () => document.getElementById('q2').value.trim(),
+    () => document.getElementById('q3').value,
+    () => document.getElementById('q4').value.trim(),
+    () => document.getElementById('q5').value.trim(),
+    () => {
+      const pills = document.querySelectorAll('#q6-pills input:checked');
+      const custom = document.getElementById('q6-custom').value.trim();
+      return pills.length > 0 || custom;
+    },
+    () => document.getElementById('q7').value.trim(),
+    () => document.getElementById('q8').value.trim(),
+    () => document.getElementById('q9').value.trim(),
+    () => {
+      const pills = document.querySelectorAll('#q10-pills input:checked');
+      const custom = document.getElementById('q10-custom').value.trim();
+      return pills.length > 0 || custom;
+    },
+    () => document.getElementById('q11').value.trim(),
+    () => document.getElementById('q12').value,
+  ];
+  checks.forEach(fn => { if (fn()) filled++; });
+  const pct = Math.round((filled / 12) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = filled + ' / 12';
+}
+
+// ── Collect data ──
+function collectData() {
+  const q6Pills = Array.from(document.querySelectorAll('#q6-pills input:checked')).map(i => i.value);
+  const q6Custom = document.getElementById('q6-custom').value.trim();
+  const q6All = q6Custom ? [...q6Pills, q6Custom] : q6Pills;
+
+  const q10Pills = Array.from(document.querySelectorAll('#q10-pills input:checked')).map(i => i.value);
+  const q10Custom = document.getElementById('q10-custom').value.trim();
+  const q10All = q10Custom ? [...q10Pills, q10Custom] : q10Pills;
+
+  const stageMap = {
+    startup: '初创期', growth: '成长期', expansion: '扩张期', mature: '成熟期'
+  };
+  const goalMap = {
+    awareness: '品牌曝光', engagement: '互动增长', leadgen: '获客转化',
+    community: '社群建立', launch: '新品上线'
+  };
+
+  return {
+    // ── BrandDNA 原始字段 ──
+    brandName: document.getElementById('q1').value.trim(),
+    industry: document.getElementById('q1').value.trim(),
+    brandBackground: document.getElementById('q2').value.trim(),
+    stage: stageMap[document.getElementById('q3').value] || document.getElementById('q3').value,
+    targetAudience: document.getElementById('q4').value.trim(),
+    competitorAnalysis: document.getElementById('q5').value.trim(),
+    brandPersonality: q6All,
+    brandMission: document.getElementById('q7').value.trim(),
+    brandVision: document.getElementById('q8').value.trim(),
+    coreAdvantages: document.getElementById('q9').value.trim(),
+    marketingChannels: q10All,
+    provenContentDirections: document.getElementById('q11').value.trim(),
+    primaryGoal: goalMap[document.getElementById('q12').value] || document.getElementById('q12').value,
+
+    // ── Proposal Builder 直接映射字段 ──
+    product: document.getElementById('q9').value.trim(),
+    tone: q6All.join('、'),
+    challenge: document.getElementById('q5').value.trim(),
+    goal1: goalMap[document.getElementById('q12').value] || '',
+    goal2: document.getElementById('q11').value.trim(),
+    platforms: q10All,
+    personas: document.getElementById('q4').value.trim(),
+    styleNote: q6All.join('、'),
+
+    // ── Meta ──
+    exportedAt: new Date().toISOString(),
+    version: '2.0',
+    source: 'BrandDNA Collector'
+  };
+}
+
+// ── Export JSON ──
+function exportJSON() {
+  const data = collectData();
+  const json = JSON.stringify(data, null, 2);
+  const filename = (data.brandName || 'brand').replace(/\s+/g, '_') + '_brand.json';
+  downloadFile(json, filename, 'application/json');
+  showToast('✓ brand.json 已导出！可直接导入 Proposal Builder');
+
+  // 更新预览
+  document.getElementById('jsonPreviewContent').textContent = json;
+  document.getElementById('jsonPreview').classList.add('visible');
+}
+
+// ── Export CSV ──
+function exportCSV() {
+  const d = collectData();
+  const rows = [
+    ['字段', '内容'],
+    ['品牌名称/行业', d.brandName],
+    ['创立背景', d.brandBackground],
+    ['发展阶段', d.stage],
+    ['目标客群', d.targetAudience],
+    ['竞品/差异化', d.competitorAnalysis],
+    ['品牌个性/口吻', d.brandPersonality.join('、')],
+    ['品牌使命', d.brandMission],
+    ['品牌愿景', d.brandVision],
+    ['核心优势', d.coreAdvantages],
+    ['营销渠道', d.marketingChannels.join('、')],
+    ['已验证内容方向', d.provenContentDirections],
+    ['首要营销目标', d.primaryGoal],
+    ['导出时间', d.exportedAt],
+  ];
+  const csv = '\uFEFF' + rows.map(r =>
+    r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')
+  ).join('\n');
+  const filename = (d.brandName || 'brand').replace(/\s+/g, '_') + '_brand.csv';
+  downloadFile(csv, filename, 'text/csv;charset=utf-8');
+  showToast('✓ CSV 已导出');
+}
+
+// ── Toggle JSON preview ──
+function togglePreview() {
+  const preview = document.getElementById('jsonPreview');
+  if (preview.classList.contains('visible')) {
+    preview.classList.remove('visible');
+  } else {
+    const data = collectData();
+    document.getElementById('jsonPreviewContent').textContent = JSON.stringify(data, null, 2);
+    preview.classList.add('visible');
+  }
+}
+
+// ── Download helper ──
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Reset ──
+function resetForm() {
+  if (!confirm('确定要清空所有填写内容吗？')) return;
+  document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.value = '');
+  document.querySelectorAll('.pill-label input').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.pill-label').classList.remove('checked');
+  });
+  document.getElementById('jsonPreview').classList.remove('visible');
+  updateProgress();
+  showToast('表单已重置');
+}
+
+// init
+updateProgress();
+</script>
+</body>
+</html>
