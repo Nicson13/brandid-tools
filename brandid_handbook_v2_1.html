@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brandid AI 团队操作手册 v2.1</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#0f0f11;--surface:#17171a;--surface2:#1e1e22;--border:#2a2a30;
+  --border-light:#35353d;--accent:#e8c547;--accent2:#4ecdc4;--accent3:#ff6b6b;
+  --accent4:#a78bfa;--text-primary:#f0ede8;--text-secondary:#8b8994;
+  --text-muted:#55535e;--radius:10px;--radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.65;min-height:100vh;}
+/* Header */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:16px;color:#000;}
+.header-title{font-size:14px;font-weight:600;}
+.header-sub{font-size:11px;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase;}
+.header-badge{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:4px 10px;border-radius:20px;border:1px solid var(--border);}
+/* Hero */
+.hero{padding:40px 32px 26px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(232,197,71,.06) 0%,transparent 70%);pointer-events:none;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,36px);line-height:1.15;margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:var(--accent);}
+.hero-desc{font-size:14px;color:var(--text-secondary);max-width:540px;margin-bottom:18px;}
+.hero-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid var(--border-light);color:var(--text-secondary);background:var(--surface2);}
+.chip.yellow{border-color:#5c4a1a;color:var(--accent);background:rgba(232,197,71,.07);}
+.chip.teal{border-color:#1a4c4a;color:var(--accent2);background:rgba(78,205,196,.07);}
+.chip.purple{border-color:#3d3060;color:var(--accent4);background:rgba(167,139,250,.07);}
+.chip.green{border-color:#2a5c3a;color:#6dcf8c;background:rgba(109,207,140,.07);}
+/* Variables */
+.variables-section{padding:18px 32px;border-bottom:1px solid var(--border);background:var(--surface);}
+.section-header{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.section-header.open{margin-bottom:16px;}
+.section-icon{width:26px;height:26px;background:rgba(78,205,196,.12);border:1px solid rgba(78,205,196,.25);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.section-title{font-size:13px;font-weight:600;flex:1;}
+.section-hint{font-size:12px;color:var(--text-muted);}
+.chevron{color:var(--text-muted);font-size:11px;transition:transform .2s;}
+.chevron.open{transform:rotate(90deg);}
+.vars-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;}
+.vars-grid.open{display:grid;}
+.var-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;transition:border-color .2s;}
+.var-item:focus-within{border-color:var(--accent2);}
+.var-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:.05em;margin-bottom:3px;}
+.var-hint{font-size:10px;color:var(--text-muted);font-family:'DM Sans',sans-serif;}
+.var-input{width:100%;background:transparent;border:none;color:var(--text-primary);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;padding:2px 0;}
+.var-input::placeholder{color:var(--text-muted);font-size:12px;}
+.vars-apply-btn{margin-top:12px;display:none;background:var(--accent);color:#000;border:none;border-radius:var(--radius-sm);padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;align-items:center;gap:5px;}
+.vars-apply-btn.open{display:inline-flex;}
+.vars-apply-btn:hover{opacity:.88;}
+/* Tabs */
+.tabs-nav{display:flex;padding:0 32px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:60px;z-index:90;overflow-x:auto;}
+.tab-btn{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text-muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.tab-btn:hover{color:var(--text-secondary);}
+.tab-btn.active{color:var(--text-primary);border-bottom-color:var(--accent);}
+.tab-badge{font-size:10px;padding:2px 6px;border-radius:10px;background:var(--surface2);color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.tab-btn.active .tab-badge{background:rgba(232,197,71,.15);color:var(--accent);}
+/* Progress */
+.progress-bar-wrap{height:3px;background:var(--border);}
+.progress-bar-fill{height:100%;background:var(--accent);transition:width .4s ease;width:0%;}
+/* Tab Panels */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+/* Layout */
+.main-layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 140px);}
+/* Sidebar */
+.sidebar{border-right:1px solid var(--border);padding:18px 0;position:sticky;top:132px;height:calc(100vh - 132px);overflow-y:auto;background:var(--surface);}
+.sidebar-label{font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;padding:0 16px 6px;margin-top:10px;}
+.sidebar-link{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:12.5px;color:var(--text-secondary);cursor:pointer;border-left:2px solid transparent;transition:all .15s;user-select:none;}
+.sidebar-link:hover{color:var(--text-primary);background:rgba(255,255,255,.03);}
+.sidebar-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(232,197,71,.05);}
+.sidebar-link.done{color:#6dcf8c;border-left-color:#2a5c3a;}
+.step-num{width:18px;height:18px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);font-size:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0;color:var(--text-muted);}
+.sidebar-link.active .step-num{background:var(--accent);border-color:var(--accent);color:#000;}
+.sidebar-link.done .step-num{background:#1a3a22;border-color:#2a5c3a;color:#6dcf8c;}
+/* Content */
+.content-area{padding:28px 36px;max-width:860px;}
+/* Section intro */
+.section-intro{padding:0 0 18px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.section-intro h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:5px;}
+.section-intro p{font-size:13px;color:var(--text-secondary);}
+.phase-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.phase-pill{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:6px;font-size:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text-secondary);}
+.phase-dot{width:7px;height:7px;border-radius:50%;background:var(--text-muted);}
+.phase-pill.a .phase-dot{background:var(--accent);}
+.phase-pill.b .phase-dot{background:var(--accent2);}
+.phase-pill.c .phase-dot{background:#6dcf8c;}
+.phase-pill.d .phase-dot{background:var(--accent4);}
+/* Role filter */
+.role-filter{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px;}
+.role-label{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.role-btn{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);transition:all .15s;}
+.role-btn.r-all{background:rgba(255,255,255,.08);color:var(--text-primary);border-color:var(--border-light);}
+.role-btn.r-km{background:rgba(232,197,71,.12);color:var(--accent);border-color:rgba(232,197,71,.3);}
+.role-btn.r-exec{background:rgba(78,205,196,.12);color:var(--accent2);border-color:rgba(78,205,196,.3);}
+/* Step cards */
+.step-group{margin-bottom:8px;}
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s;}
+.step-card.active{border-color:var(--border-light);}
+.step-header{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;user-select:none;}
+.step-header:hover{background:rgba(255,255,255,.02);}
+.step-badge{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.step-card.active .step-badge{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
+.step-card.done .step-badge{background:#1a3a22;border-color:#2a5c3a;color:#6dcf8c;}
+.step-meta{flex:1;}
+.step-title{font-size:14px;font-weight:600;}
+.step-sub{font-size:12px;color:var(--text-muted);margin-top:1px;}
+.step-tags{display:flex;gap:5px;}
+.tag{font-size:10px;padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;}
+.tag-km{background:rgba(232,197,71,.1);color:var(--accent);border:1px solid rgba(232,197,71,.2);}
+.tag-exec{background:rgba(78,205,196,.1);color:var(--accent2);border:1px solid rgba(78,205,196,.2);}
+.tag-all{background:rgba(255,255,255,.05);color:var(--text-secondary);border:1px solid var(--border);}
+.tag-notion{background:rgba(167,139,250,.1);color:var(--accent4);border:1px solid rgba(167,139,250,.2);}
+.step-toggle{color:var(--text-muted);font-size:11px;transition:transform .2s;}
+.step-card.active .step-toggle{transform:rotate(90deg);}
+.step-body{display:none;padding:0 18px 20px;border-top:1px solid var(--border);}
+.step-card.active .step-body{display:block;}
+.step-body-inner{padding-top:16px;}
+/* Content blocks */
+.instruction{font-size:13.5px;color:var(--text-secondary);line-height:1.75;margin-bottom:12px;}
+.instruction strong{color:var(--text-primary);font-weight:600;}
+.callout{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;color:var(--text-secondary);margin:12px 0;}
+.callout.teal{border-left-color:var(--accent2);}
+.callout.red{border-left-color:var(--accent3);}
+.callout.green{border-left-color:#6dcf8c;}
+.callout.purple{border-left-color:var(--accent4);}
+.callout-label{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;color:var(--accent);}
+.callout.teal .callout-label{color:var(--accent2);}
+.callout.red .callout-label{color:var(--accent3);}
+.callout.green .callout-label{color:#6dcf8c;}
+.callout.purple .callout-label{color:var(--accent4);}
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:7px;margin:12px 0;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .15s;}
+.check-item:hover{border-color:var(--border-light);}
+.check-item.checked{border-color:#2a5c3a;background:rgba(109,207,140,.05);}
+.check-box{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border-light);background:transparent;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;}
+.check-item.checked .check-box{background:#6dcf8c;border-color:#6dcf8c;color:#000;}
+.check-text{font-size:13px;color:var(--text-secondary);line-height:1.5;flex:1;}
+.check-text strong{color:var(--text-primary);}
+.check-item.checked .check-text{color:var(--text-muted);text-decoration:line-through;}
+.check-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+/* Block gate */
+.block-gate{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);margin:12px 0;font-size:13px;}
+.block-gate.blocked{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:var(--accent3);}
+.block-gate.pass{background:rgba(109,207,140,.07);border:1px solid rgba(109,207,140,.2);color:#6dcf8c;}
+/* SOP list */
+.sop-list{display:flex;flex-direction:column;gap:9px;margin:12px 0;}
+.sop-item{display:flex;gap:12px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);align-items:flex-start;}
+.sop-num{width:22px;height:22px;border-radius:50%;background:rgba(232,197,71,.12);border:1px solid rgba(232,197,71,.25);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sop-text{font-size:13px;color:var(--text-secondary);line-height:1.6;}
+.sop-text strong{color:var(--text-primary);}
+/* Feedback grid */
+.feedback-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
+.feedback-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;}
+.fb-q{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--accent);margin-bottom:6px;}
+.fb-label{font-size:13px;color:var(--text-primary);font-weight:600;margin-bottom:4px;}
+.fb-desc{font-size:12px;color:var(--text-secondary);}
+.fb-store{font-size:10px;color:var(--text-muted);margin-top:6px;padding-top:5px;border-top:1px solid var(--border);}
+/* Review grid */
+.review-grid{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.review-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);}
+.rv-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);min-width:20px;margin-top:1px;}
+.rv-content{flex:1;}
+.rv-q{font-size:13px;color:var(--text-primary);font-weight:600;margin-bottom:3px;}
+.rv-hint{font-size:12px;color:var(--text-secondary);}
+.rv-action{font-size:11px;color:var(--accent3);margin-top:4px;}
+/* Score bar */
+.score-bar-wrap{display:flex;align-items:center;gap:10px;margin-top:14px;}
+.score-label{font-size:12px;color:var(--text-secondary);min-width:60px;}
+.score-bar{flex:1;height:6px;background:var(--border);border-radius:3px;}
+.score-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .5s;}
+.score-pct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);min-width:35px;text-align:right;}
+/* Prompt block */
+.prompt-block{margin:14px 0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.prompt-header{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.prompt-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);}
+.prompt-label strong{color:var(--accent);}
+.prompt-actions{display:flex;gap:6px;}
+.btn-copy{display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--accent);color:#000;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s,transform .1s;}
+.btn-copy:hover{opacity:.88;}
+.btn-copy:active{transform:scale(.97);}
+.btn-copy.copied{background:#6dcf8c;}
+.btn-copy.notion-copy{background:var(--accent4);color:#fff;}
+.btn-copy.notion-copy.copied{background:#6dcf8c;color:#000;}
+.prompt-content{background:#0a0a0c;padding:15px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.85;color:#c8c4be;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow-y:auto;}
+.prompt-content::-webkit-scrollbar{width:4px;}
+.prompt-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.var-hi{color:var(--accent2);background:rgba(78,205,196,.1);border-radius:3px;padding:0 2px;}
+.notion-hi{color:var(--accent4);background:rgba(167,139,250,.1);border-radius:3px;padding:0 2px;}
+/* Step footer */
+.step-footer{margin-top:16px;display:flex;gap:8px;align-items:center;}
+.btn-done{padding:7px 15px;background:rgba(109,207,140,.1);color:#6dcf8c;border:1px solid rgba(109,207,140,.25);border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;}
+.btn-done:hover{background:rgba(109,207,140,.18);}
+.btn-next{padding:7px 15px;background:var(--accent);color:#000;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;}
+.btn-next:hover{opacity:.88;}
+hr.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+/* Pivot card */
+.pivot-section{margin:14px 0;}
+.pivot-title{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.pivot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pivot-card{padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);}
+.pivot-signal{font-size:11px;color:var(--accent3);margin-bottom:4px;}
+.pivot-action{font-size:12.5px;color:var(--text-secondary);}
+.pivot-action strong{color:var(--text-primary);}
+/* db info */
+.db-info{background:var(--surface2);border:1px solid rgba(167,139,250,.25);border-radius:var(--radius);padding:14px 16px;margin:14px 0;}
+.db-info-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--accent4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.db-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;font-size:12px;}
+.db-key{color:var(--text-muted);min-width:100px;flex-shrink:0;}
+.db-val{color:var(--text-secondary);font-family:'JetBrains Mono',monospace;font-size:11px;word-break:break-all;}
+.db-val.hi{color:var(--accent2);}
+/* output blocks */
+.output-blocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.output-block{padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);}
+.ob-header{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;}
+.ob-title{font-size:12px;font-weight:600;}
+.ob-desc{font-size:11.5px;color:var(--text-secondary);}
+.ob-dest{font-size:11px;color:var(--text-muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+/* scrollbar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+/* responsive */
+@media(max-width:768px){.main-layout{grid-template-columns:1fr;}.sidebar{display:none;}.content-area{padding:18px;}.hero{padding:24px 18px 18px;}.variables-section,.tabs-nav{padding-left:18px;padding-right:18px;}.output-blocks,.pivot-grid,.feedback-grid{grid-template-columns:1fr;}}
+.hidden{display:none!important;}
+code{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(78,205,196,.1);color:var(--accent2);padding:1px 5px;border-radius:3px;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div class="logo-mark">B</div>
+    <div>
+      <div class="header-title">Brandid AI 团队操作手册</div>
+      <div class="header-sub">Team Knowledge System</div>
+    </div>
+  </div>
+  <div class="header-badge">v2.1 · 2026</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">● BRANDID INTERNAL SYSTEM</div>
+  <h1>沟通、判断、执行——<br><em>三件事做好，其余交给 AI</em></h1>
+  <p class="hero-desc">手册分三个模块：KM 工作准则（先读）、万能会议提取（日常）、月度选题生成（每月）。先了解原则，再执行操作。</p>
+  <div class="hero-chips">
+    <span class="chip yellow">📐 KM 工作准则</span>
+    <span class="chip teal">🎯 万能会议提取</span>
+    <span class="chip green">📅 月度选题生成</span>
+    <span class="chip purple">🔗 Notion 自动存档</span>
+  </div>
+</div>
+
+<!-- Variables -->
+<div class="variables-section">
+  <div class="section-header" onclick="toggleVars()">
+    <div class="section-icon">⚙️</div>
+    <div class="section-title">填写变量（填完后复制 Prompt 会自动套用）</div>
+    <div class="section-hint" id="varsHint">展开填写</div>
+    <div class="chevron" id="varsChevron">▶</div>
+  </div>
+  <div class="vars-grid" id="varsGrid">
+    <div class="var-item"><div class="var-label">{{CLIENT_CODE}} <span class="var-hint">客户代号</span></div><input class="var-input" id="v_CLIENT_CODE" placeholder="例：KOBE"></div>
+    <div class="var-item"><div class="var-label">{{CLIENT_NAME}} <span class="var-hint">客户全名</span></div><input class="var-input" id="v_CLIENT_NAME" placeholder="例：Kobe Chef Studio"></div>
+    <div class="var-item"><div class="var-label">{{OPERATOR_NAME}} <span class="var-hint">操作人</span></div><input class="var-input" id="v_OPERATOR_NAME" placeholder="例：Sarah"></div>
+    <div class="var-item"><div class="var-label">{{DATE}} <span class="var-hint">会议日期</span></div><input class="var-input" id="v_DATE" placeholder="例：2026-05-04"></div>
+    <div class="var-item"><div class="var-label">{{SOURCE_TYPE}} <span class="var-hint">来源类型</span></div><input class="var-input" id="v_SOURCE_TYPE" placeholder="例：客户面谈"></div>
+    <div class="var-item"><div class="var-label">{{MONTH}} <span class="var-hint">所属月份</span></div><input class="var-input" id="v_MONTH" placeholder="例：2026-05"></div>
+    <div class="var-item"><div class="var-label">{{BATCH_NAME}} <span class="var-hint">月度批次</span></div><input class="var-input" id="v_BATCH_NAME" placeholder="例：KOBE_2026_05"></div>
+    <div class="var-item"><div class="var-label">{{STRATEGY_DIRECTION}} <span class="var-hint">策略方向</span></div><input class="var-input" id="v_STRATEGY_DIRECTION" placeholder="例：建立专业权威形象"></div>
+    <div class="var-item"><div class="var-label">{{TOPIC_COUNT}} <span class="var-hint">选题数量</span></div><input class="var-input" id="v_TOPIC_COUNT" placeholder="例：20"></div>
+    <div class="var-item"><div class="var-label">{{MONTHLY_KEY_MESSAGES}} <span class="var-hint">本月重点</span></div><input class="var-input" id="v_MONTHLY_KEY_MESSAGES" placeholder="例：主推新疗程上线"></div>
+    <div class="var-item"><div class="var-label">{{BRAND_TONE}} <span class="var-hint">品牌口吻</span></div><input class="var-input" id="v_BRAND_TONE" placeholder="例：专业、温暖、亲切"></div>
+    <div class="var-item"><div class="var-label">{{TARGET_AUDIENCE}} <span class="var-hint">目标受众</span></div><input class="var-input" id="v_TARGET_AUDIENCE" placeholder="例：25-40岁都市女性"></div>
+    <div class="var-item"><div class="var-label">{{CONTENT_THEMES_THAT_WORK}} <span class="var-hint">有效内容方向</span></div><input class="var-input" id="v_CONTENT_THEMES_THAT_WORK" placeholder="例：教育型内容、前后对比"></div>
+    <div class="var-item"><div class="var-label">{{BRAND_NO_GO_ZONES}} <span class="var-hint">品牌禁区</span></div><input class="var-input" id="v_BRAND_NO_GO_ZONES" placeholder="例：不做价格战内容"></div>
+  </div>
+  <button class="vars-apply-btn" id="varsApplyBtn" onclick="applyVars()">✦ 套用到所有 Prompt</button>
+</div>
+
+<!-- Tabs -->
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('km',this)">📐 KM 工作准则 <span class="tab-badge">先读</span></button>
+  <button class="tab-btn" onclick="switchTab('meeting',this)">🎯 万能会议提取 <span class="tab-badge">日常</span></button>
+  <button class="tab-btn" onclick="switchTab('topic',this)">📅 月度选题生成 <span class="tab-badge">每月</span></button>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 0: KM 工作准则 -->
+<!-- ══════════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-km">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressKM"></div></div>
+  <div class="main-layout">
+    <nav class="sidebar" id="sidebarKM">
+      <div class="sidebar-label">三大准则</div>
+      <div class="sidebar-link active" onclick="jumpStep('KM',0)" id="sKM0"><span class="step-num">A</span> 信息采集指引</div>
+      <div class="sidebar-link" onclick="jumpStep('KM',1)" id="sKM1"><span class="step-num">B</span> 月度效果反馈</div>
+      <div class="sidebar-link" onclick="jumpStep('KM',2)" id="sKM2"><span class="step-num">C</span> AI 方案审查</div>
+    </nav>
+
+    <div class="content-area">
+      <div class="section-intro">
+        <h2>KM 工作准则</h2>
+        <p>Key Manager 的核心价值在于：<strong>沟通采集</strong>做到位，<strong>判断审查</strong>把好关。重复性执行工作交给 AI，你的精力应该花在这两件事上。</p>
+        <div class="phase-row">
+          <div class="phase-pill a"><div class="phase-dot"></div>A. 信息采集标准</div>
+          <div class="phase-pill b"><div class="phase-dot"></div>B. 月度效果闭环</div>
+          <div class="phase-pill c"><div class="phase-dot"></div>C. 甲方视角审查</div>
+        </div>
+      </div>
+
+      <!-- 模块 A：信息采集 -->
+      <div class="step-group">
+        <div class="step-card active" id="stepKM0" data-role="km">
+          <div class="step-header" onclick="toggleStep('KM',0)">
+            <div class="step-badge">A</div>
+            <div class="step-meta">
+              <div class="step-title">模块 A · 信息采集指引</div>
+              <div class="step-sub">开始做内容前，先用这个清单自检</div>
+            </div>
+            <div class="step-tags"><span class="tag tag-km">Key Manager</span></div>
+            <div class="step-toggle">▶</div>
+          </div>
+          <div class="step-body"><div class="step-body-inner">
+
+            <div class="instruction">AI 的输出质量完全取决于你提供的信息质量。<strong>垃圾进，垃圾出。</strong>以下清单是开始执行内容前的最低门槛——未完成超过 2 项，不应该开始做内容，先约客户补充。</div>
+
+            <div class="checklist" id="checklistA">
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-text"><strong>品牌口吻（Brand Tone）</strong><div class="check-sub">Notion L1「品牌口吻」字段有内容，不是空白</div></div>
+              </div>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-text"><strong>目标受众定义</strong><div class="check-sub">Notion L1「主要受众」或受众画像库有至少一个画像记录</div></div>
+              </div>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-text"><strong>品牌禁区（No-Go Zones）</strong><div class="check-sub">Notion L1「品牌禁区」字段有内容，哪怕只有一条也算</div></div>
+              </div>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-text"><strong>本月重点信息</strong><div class="check-sub">已从客户获得本月的主推方向、活动、或重点产品</div></div>
+              </div>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-text"><strong>核心价值主张</strong><div class="check-sub">Notion L1「品牌核心主张」已填写，能一句话说清楚客户卖什么</div></div>
+              </div>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-text"><strong>竞争参考（可选）</strong><div class="check-sub">客户提到过竞品，或你已做过基本的竞品内容观察</div></div>
+              </div>
+            </div>
+
+            <div id="checkGate" class="block-gate blocked" style="display:none">
+              ⛔ 还有未完成项目，建议先补充信息再执行
+            </div>
+            <div id="checkPass" class="block-gate pass" style="display:none">
+              ✓ 信息充足，可以开始执行
+            </div>
+
+            <hr class="divider">
+
+            <div class="instruction"><strong>信息不足时该怎么办？</strong></div>
+            <div class="sop-list">
+              <div class="sop-item"><div class="sop-num">1</div><div class="sop-text"><strong>不要等，主动约</strong>：以「我需要了解更多背景才能做出更好的内容方案」为由，直接约客户 15-20 分钟的快速通话。</div></div>
+              <div class="sop-item"><div class="sop-num">2</div><div class="sop-text"><strong>按 Notion 框架提问</strong>：打开 Notion L1 客户主档，哪个字段是空的就问哪个，不需要自己设计问题。</div></div>
+              <div class="sop-item"><div class="sop-num">3</div><div class="sop-text"><strong>会后立刻跑提取</strong>：通话结束后 30 分钟内，用「万能会议提取」Prompt 把记录整理成 JSON 存档。趁记忆新鲜时操作。</div></div>
+            </div>
+
+            <div class="step-footer">
+              <button class="btn-done" onclick="doneStep('KM',0)">✓ 已了解，标记完成</button>
+              <button class="btn-next" onclick="nextStep('KM',0)">下一个模块 →</button>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 模块 B：月度效果反馈 -->
+      <div class="step-group">
+        <div class="step-card" id="stepKM1" data-role="km">
+          <div class="step-header" onclick="toggleStep('KM',1)">
+            <div class="step-badge">B</div>
+            <div class="step-meta">
+              <div class="step-title">模块 B · 月度效果反馈框架</div>
+              <div class="step-sub">每月月底，三个问题问客户，数据存入 Notion</div>
+            </div>
+            <div class="step-tags"><span class="tag tag-km">Key Manager</span></div>
+            <div class="step-toggle">▶</div>
+          </div>
+          <div class="step-body"><div class="step-body-inner">
+
+            <div class="instruction">执行了内容，但没有收集效果反馈，就无法判断策略方向是否正确。每月月底，用以下三个问题问客户，记录下来作为下月 Pivot 的依据。</div>
+
+            <div class="feedback-grid">
+              <div class="feedback-card">
+                <div class="fb-q">问题 01</div>
+                <div class="fb-label">询问的人都问什么？</div>
+                <div class="fb-desc">这个月广告或内容带来的咨询，他们主要问的是什么问题？</div>
+                <div class="fb-store">→ 存入 L2「关键信息」字段备注</div>
+              </div>
+              <div class="feedback-card">
+                <div class="fb-q">问题 02</div>
+                <div class="fb-label">卡在哪里没有下文？</div>
+                <div class="fb-desc">大概几成有继续跟进？他们在哪个阶段没有继续回复或来店？</div>
+                <div class="fb-store">→ 存入 L2「成功指标KPI」备注</div>
+              </div>
+              <div class="feedback-card">
+                <div class="fb-q">问题 03</div>
+                <div class="fb-label">哪条内容反应最好/差？</div>
+                <div class="fb-desc">客户或你自己观察到，本月哪条内容互动最好？哪条最无人问津？</div>
+                <div class="fb-store">→ 存入 L3 对应选题的「审查备注」</div>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="pivot-section">
+              <div class="pivot-title">根据反馈做 Pivot 的判断标准</div>
+              <div class="pivot-grid">
+                <div class="pivot-card">
+                  <div class="pivot-signal">🔴 信号：询问量多但转化少</div>
+                  <div class="pivot-action"><strong>Pivot：</strong>内容吸引了错误的受众，或价格/定位没有说清楚。下月加强「筛选型内容」（说清楚适合谁）。</div>
+                </div>
+                <div class="pivot-card">
+                  <div class="pivot-signal">🔴 信号：几乎没有询问</div>
+                  <div class="pivot-action"><strong>Pivot：</strong>内容没有触发行动欲望。下月增加 CTA 明确度，或改变内容切入角度。</div>
+                </div>
+                <div class="pivot-card">
+                  <div class="pivot-signal">🟡 信号：互动好但询问少</div>
+                  <div class="pivot-action"><strong>Pivot：</strong>内容娱乐性强但商业转化弱。调整教育型内容比例，加入更多产品/服务场景展示。</div>
+                </div>
+                <div class="pivot-card">
+                  <div class="pivot-signal">🟢 信号：询问质量好且转化</div>
+                  <div class="pivot-action"><strong>保持：</strong>记录这类内容的共同特征，下月加大这类内容的比例复制成功。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="callout teal">
+              <div class="callout-label">💡 提示</div>
+              客户的「直觉」也是有效数据。他们说「感觉这个月来的都是问价格的不是认真的」——这就是一个信号，记录下来存进 Notion，下次生成选题时作为上下文参考。
+            </div>
+
+            <div class="step-footer">
+              <button class="btn-done" onclick="doneStep('KM',1)">✓ 已了解</button>
+              <button class="btn-next" onclick="nextStep('KM',1)">下一个模块 →</button>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 模块 C：AI 审查框架 -->
+      <div class="step-group">
+        <div class="step-card" id="stepKM2" data-role="km">
+          <div class="step-header" onclick="toggleStep('KM',2)">
+            <div class="step-badge">C</div>
+            <div class="step-meta">
+              <div class="step-title">模块 C · AI 方案审查框架</div>
+              <div class="step-sub">把自己当甲方，用这五个问题评估 AI 的输出</div>
+            </div>
+            <div class="step-tags"><span class="tag tag-km">Key Manager</span></div>
+            <div class="step-toggle">▶</div>
+          </div>
+          <div class="step-body"><div class="step-body-inner">
+
+            <div class="instruction">AI 能快速生成大量内容，但它不了解你的客户。<strong>你的判断力才是品质保证的最后一道关卡。</strong>每次 AI 出了方案，对照以下五个问题审查，不通过的打回重做——直到你愿意用「我是这个品牌的老板」的身份认可为止。</div>
+
+            <div class="review-grid" id="reviewGrid">
+              <div class="review-item">
+                <div class="rv-num">Q1</div>
+                <div class="rv-content">
+                  <div class="rv-q">这个方案符合客户的品牌口吻吗？</div>
+                  <div class="rv-hint">对比 Notion L1「品牌口吻」字段——语气、措辞、风格是否一致？</div>
+                  <div class="rv-action">✗ 不符合 → 告诉 AI「请用更 [温暖/专业/轻松] 的方式重写」</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <div class="rv-num">Q2</div>
+                <div class="rv-content">
+                  <div class="rv-q">有没有触碰品牌禁区？</div>
+                  <div class="rv-hint">逐条对照 Notion L1「品牌禁区」字段，包括措辞、话题、视觉暗示</div>
+                  <div class="rv-action">✗ 有触碰 → 必须打回，告知具体违反了哪条禁区</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <div class="rv-num">Q3</div>
+                <div class="rv-content">
+                  <div class="rv-q">目标受众会有共鸣吗？</div>
+                  <div class="rv-hint">代入受众身份——这条内容解决了他们的什么问题？会让他们停下来吗？</div>
+                  <div class="rv-action">✗ 没共鸣 → 告诉 AI「受众是 [描述]，请从他们的视角重新切入」</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <div class="rv-num">Q4</div>
+                <div class="rv-content">
+                  <div class="rv-q">是否回应了本月的重点信息？</div>
+                  <div class="rv-hint">至少 3 条内容应该直接呼应本月的策略方向或重点产品</div>
+                  <div class="rv-action">✗ 没有 → 告诉 AI「本月重点是 [信息]，请优先围绕这个方向生成」</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <div class="rv-num">Q5</div>
+                <div class="rv-content">
+                  <div class="rv-q">如果你是这个品牌的老板，你会接受这个方案吗？</div>
+                  <div class="rv-hint">直觉测试——如果你感到「还差点什么」，说明还没到位</div>
+                  <div class="rv-action">✗ 不接受 → 说出「差在哪里」，再叫 AI 修改。不能只说「不好」</div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="instruction"><strong>如何有效地打回 AI 方案？</strong></div>
+            <div class="callout">
+              <div class="callout-label">❌ 无效反馈（AI 不知道怎么改）</div>
+              「感觉不对」「不够好」「再改一下」
+            </div>
+            <div class="callout green">
+              <div class="callout-label">✅ 有效反馈（具体、可执行）</div>
+              「第 3 条选题的语气太销售感，这个客户的口吻应该更像在分享，不是在推销，请重写」<br><br>
+              「选题 T-005 违反了禁区——这个品牌不能暗示医疗效果，请换一个角度切入」<br><br>
+              「整体方向太通用，完全感受不到这是一个做 Pilates 的品牌，请加入更多这个行业的专业感」
+            </div>
+
+            <div class="callout purple">
+              <div class="callout-label">💡 核心心态</div>
+              你不是在「使用 AI 工具」，你是在「管理一个不了解客户的新员工」。你需要给他清晰的方向、具体的反馈、明确的标准——他才能做出你满意的东西。<strong>大胆要求，直到方案被接纳。</strong>
+            </div>
+
+            <div class="step-footer">
+              <button class="btn-done" onclick="doneStep('KM',2)">✓ 三个模块全部读完</button>
+              <button class="btn-next" onclick="()=>switchTab('meeting',document.querySelector('.tab-btn:nth-child(2)'))">去看操作流程 →</button>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 1: 万能会议提取 -->
+<!-- ══════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-meeting">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressA"></div></div>
+  <div class="main-layout">
+    <nav class="sidebar" id="sidebarA">
+      <div class="sidebar-label">操作流程</div>
+      <div class="sidebar-link active" onclick="jumpStep('A',0)" id="sA0"><span class="step-num">1</span> 系统逻辑</div>
+      <div class="sidebar-link" onclick="jumpStep('A',1)" id="sA1"><span class="step-num">2</span> 准备素材</div>
+      <div class="sidebar-link" onclick="jumpStep('A',2)" id="sA2"><span class="step-num">3</span> System Prompt</div>
+      <div class="sidebar-link" onclick="jumpStep('A',3)" id="sA3"><span class="step-num">4</span> User Prompt</div>
+      <div class="sidebar-link" onclick="jumpStep('A',4)" id="sA4"><span class="step-num">5</span> 检查 JSON</div>
+      <div class="sidebar-link" onclick="jumpStep('A',5)" id="sA5"><span class="step-num">6</span> 存入 Notion</div>
+      <div class="sidebar-label">追加更新</div>
+      <div class="sidebar-link" onclick="jumpStep('A',6)" id="sA6"><span class="step-num">7</span> Prompt B（合并）</div>
+    </nav>
+    <div class="content-area">
+      <div class="section-intro">
+        <h2>万能会议提取系统</h2>
+        <p>一个 Prompt 自动识别会议内容属于哪个知识层级，分类提取后通过 Notion MCP 一次性写入对应数据库。有开会就跑，一个对话完成。</p>
+        <div class="phase-row">
+          <div class="phase-pill a"><div class="phase-dot"></div>有开会就跑</div>
+          <div class="phase-pill b"><div class="phase-dot"></div>一个对话完成</div>
+          <div class="phase-pill c"><div class="phase-dot"></div>Brand DNA / L2 / 受众画像 / 选题概念自动分层</div>
+        </div>
+      </div>
+      <div class="role-filter">
+        <span class="role-label">角色筛选：</span>
+        <button class="role-btn r-all" onclick="filterRole('all',this,'A')">全部</button>
+        <button class="role-btn" onclick="filterRole('km',this,'A')">Key Manager</button>
+        <button class="role-btn" onclick="filterRole('exec',this,'A')">执行同事</button>
+      </div>
+
+      <div class="step-group"><div class="step-card active" id="stepA0" data-role="all">
+        <div class="step-header" onclick="toggleStep('A',0)"><div class="step-badge">1</div><div class="step-meta"><div class="step-title">系统逻辑</div><div class="step-sub">AI 自动识别内容层级，不需要你事先分类</div></div><div class="step-tags"><span class="tag tag-all">所有人</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="output-blocks">
+            <div class="output-block"><div class="ob-header"><div class="ob-dot" style="background:var(--accent)"></div><div class="ob-title">Brand DNA</div></div><div class="ob-desc">品牌身份、定位、口吻、禁区</div><div class="ob-dest">→ Notion L1 客户主档</div></div>
+            <div class="output-block"><div class="ob-header"><div class="ob-dot" style="background:var(--accent2)"></div><div class="ob-title">营销策略方案</div></div><div class="ob-desc">策略方向、目标、KPI、预算</div><div class="ob-dest">→ Notion L2 策略方案库</div></div>
+            <div class="output-block"><div class="ob-header"><div class="ob-dot" style="background:var(--accent4)"></div><div class="ob-title">受众画像</div></div><div class="ob-desc">人口特征、痛点、平台习惯</div><div class="ob-dest">→ Notion 受众画像库</div></div>
+            <div class="output-block"><div class="ob-header"><div class="ob-dot" style="background:#6dcf8c"></div><div class="ob-title">选题概念</div></div><div class="ob-desc">会议中提及的内容方向、题目灵感</div><div class="ob-dest">→ Notion L3 执行记录库</div></div>
+          </div>
+          <div class="callout purple">
+            <div class="callout-label">🔗 Notion 数据库 ID（已内建在导入 Prompt 里）</div>
+            <div class="db-row"><span class="db-key">L1 客户主档</span><span class="db-val hi">243e940c-6498-802c-88f2-000b1aa67500</span></div>
+            <div class="db-row"><span class="db-key">L2 策略方案库</span><span class="db-val hi">eb95feba-3cd8-4d7c-9a1a-460c0de09f7c</span></div>
+            <div class="db-row"><span class="db-key">受众画像库</span><span class="db-val hi">ec3fcfc8-16d1-482b-81b6-429cf87c9e29</span></div>
+            <div class="db-row"><span class="db-key">L3 执行记录库</span><span class="db-val hi">03629c5c-6c78-4152-b0df-30177e098c15</span></div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',0)">✓ 已了解</button><button class="btn-next" onclick="nextStep('A',0)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepA1" data-role="all">
+        <div class="step-header" onclick="toggleStep('A',1)"><div class="step-badge">2</div><div class="step-meta"><div class="step-title">准备会议记录</div><div class="step-sub">不需要排版，口语化没关系</div></div><div class="step-tags"><span class="tag tag-all">所有人</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="sop-list">
+            <div class="sop-item"><div class="sop-num">①</div><div class="sop-text"><strong>会议记录文字</strong>：录音转文字、会议笔记、WhatsApp 整理成连续文字都可以，AI 会自己理解</div></div>
+            <div class="sop-item"><div class="sop-num">②</div><div class="sop-text"><strong>确认客户代号</strong>（CLIENT_CODE）：查 Notion L1 客户主档，如 KOBE、ENCO。新客户先建立 L1 档案</div></div>
+            <div class="sop-item"><div class="sop-num">③</div><div class="sop-text"><strong>填写上方变量面板</strong>：至少填 CLIENT_CODE、CLIENT_NAME、OPERATOR_NAME、DATE、SOURCE_TYPE</div></div>
+            <div class="sop-item"><div class="sop-num">④</div><div class="sop-text"><strong>打开你的 LLM</strong>：新建对话窗，确认 Notion MCP 已连接</div></div>
+          </div>
+          <div class="callout red"><div class="callout-label">🚨 重要</div>该客户已有历史记录 → 直接跳到 <strong>Step 7（Prompt B 合并更新）</strong>，不要重跑 Prompt A</div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',1)">✓ 已准备好</button><button class="btn-next" onclick="nextStep('A',1)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepA2" data-role="km">
+        <div class="step-header" onclick="toggleStep('A',2)"><div class="step-badge">3</div><div class="step-meta"><div class="step-title">System Prompt（设置一次）</div><div class="step-sub">填入 LLM 系统设置，不是对话框</div></div><div class="step-tags"><span class="tag tag-km">Key Manager</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>SYSTEM PROMPT</strong> · Universal Meeting Extractor v1</div><div class="prompt-actions"><button class="btn-copy" onclick="copyPrompt('pSys',this)">📋 复制</button></div></div>
+            <div class="prompt-content" id="pSys">你是 Brandid 品牌营销公司的知识库整理助手。
+
+你的任务是将营销会议的文字记录，自动识别并提取为以下四个知识层级的结构化数据。每个层级独立输出，没有提及的层级输出空数组或 null。
+
+输出结构：
+{
+  "meta": { "client_code":"","client_name":"","extracted_by":"","extraction_date":"","source_type":"","layers_detected":[] },
+  "brand_dna": { ... 或 null },
+  "strategy": [ ... 或 [] ],
+  "audience_personas": [ ... 或 [] ],
+  "topic_ideas": [ ... 或 [] ]
+}
+
+【brand_dna】触发：讨论到品牌名称、故事、定位、口吻、禁区等品牌身份内容
+字段：brand_name, tagline, brand_story, vision, mission, core_values[], positioning, unique_value_proposition, key_differentiators[], price_tier, brand_voice_tone[], no_go_zones[], target_audience_summary, content_strategy_hints[]
+
+【strategy】触发：讨论到具体营销方向、目标、KPI、预算、时间线
+字段：plan_name（CLIENT_CODE_策略方向）, strategy_direction（社媒IP/线下活动/SEO/KOL合作/内容营销/付费广告/私域运营/品牌公关/电商运营/其他）, phase（规划中/进行中/测试期/稳定执行/暂停/已完结）, core_objective, target_audience, key_context, kpi, budget_direction, start_date, end_date, next_review, remarks
+
+【audience_personas】触发：讨论到受众群体、用户画像、目标客群特征
+字段：persona_name（CLIENT_CODE_画像类型）, linked_strategy, demographics, psychographics, behavioral_traits, core_pain_points, content_preferences, platform_habits[], trigger_keywords, content_taboos, persona_source（访谈/数据分析/假设待验证/混合来源）, completeness（基础版/标准版/完整版）, remarks
+
+【topic_ideas】触发：讨论到内容方向、题目灵感、创意想法
+字段：title, content_format（Reel/Carousel/Static/Story）, core_angle, audience_hook, content_type（教育型/展示型/互动型/促销型/品牌故事型）, priority（🔴重点推/🟡常规/⚡突发加题）, remarks
+
+规则：严格只输出 JSON，不加说明文字或 markdown 标记。字段值用简体中文。未提及字段填 null，不猜测。日期格式 YYYY-MM-DD。</div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',2)">✓ 已设置</button><button class="btn-next" onclick="nextStep('A',2)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepA3" data-role="exec">
+        <div class="step-header" onclick="toggleStep('A',3)"><div class="step-badge">4</div><div class="step-meta"><div class="step-title">User Prompt（每次开会后用）</div><div class="step-sub">填变量 → 贴会议记录 → 发送</div></div><div class="step-tags"><span class="tag tag-exec">执行同事</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>USER PROMPT A</strong> · 首次提取</div><div class="prompt-actions"><button class="btn-copy" onclick="copyPrompt('pUserA',this)">📋 复制</button></div></div>
+            <div class="prompt-content" id="pUserA">客户代号：<span class="var-hi">{{CLIENT_CODE}}</span>
+客户名称：<span class="var-hi">{{CLIENT_NAME}}</span>
+录入人员：<span class="var-hi">{{OPERATOR_NAME}}</span>
+会议日期：<span class="var-hi">{{DATE}}</span>
+记录来源：<span class="var-hi">{{SOURCE_TYPE}}</span>
+
+请从以下会议记录中，自动识别并提取所有涉及的知识层级（Brand DNA / 营销策略 / 受众画像 / 选题概念），以 JSON 格式输出。没有涉及的层级输出空数组或 null。
+
+=== 会议记录开始 ===
+[贴入完整会议记录]
+=== 会议记录结束 ===</div>
+          </div>
+          <div class="callout teal"><div class="callout-label">💡 拿到 JSON 后不要关闭对话</div>直接在<strong>同一个对话窗</strong>说「请帮我把以上 JSON 存入 Notion」，进入 Step 6。</div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',3)">✓ 拿到 JSON</button><button class="btn-next" onclick="nextStep('A',3)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepA4" data-role="km">
+        <div class="step-header" onclick="toggleStep('A',4)"><div class="step-badge">5</div><div class="step-meta"><div class="step-title">检查 JSON 输出质量</div><div class="step-sub">30 秒快速审核，对照模块 C 的审查框架</div></div><div class="step-tags"><span class="tag tag-km">Key Manager</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="sop-list">
+            <div class="sop-item"><div class="sop-num">①</div><div class="sop-text"><strong>meta.layers_detected</strong> 是否符合预期？会议明显讨论了受众但 audience_personas 是空数组 → AI 漏识别，追问</div></div>
+            <div class="sop-item"><div class="sop-num">②</div><div class="sop-text"><strong>没有提及的字段应该是 null</strong>，发现「太完整」的字段要怀疑是 AI 编造</div></div>
+            <div class="sop-item"><div class="sop-num">③</div><div class="sop-text"><strong>strategy.plan_name 格式</strong>：必须是 <code>CLIENT_CODE_策略方向</code>，如 KOBE_社媒IP</div></div>
+            <div class="sop-item"><div class="sop-num">④</div><div class="sop-text"><strong>no_go_zones 逐字检查</strong>：这是最关键的字段，不能有遗漏</div></div>
+            <div class="sop-item"><div class="sop-num">⑤</div><div class="sop-text"><strong>需要修正</strong>：直接在对话里说「请修改 strategy[0].kpi 为…」，AI 更新后重新输出</div></div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',4)">✓ 检查通过</button><button class="btn-next" onclick="nextStep('A',4)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepA5" data-role="exec">
+        <div class="step-header" onclick="toggleStep('A',5)"><div class="step-badge">6</div><div class="step-meta"><div class="step-title">存入 Notion（一键导入 Prompt）</div><div class="step-sub">在同一对话窗发送，AI 自动按顺序写入</div></div><div class="step-tags"><span class="tag tag-exec">执行同事</span><span class="tag tag-notion">Notion MCP</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="callout"><div class="callout-label">⚠️ 执行顺序</div>① L1（更新客户主档）→ ② L2（创建策略方案）→ ③ 受众画像 → ④ L3（创建选题记录）<br>受众画像需要先有 L2 才能建立关联，顺序不能乱。</div>
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>NOTION 导入 PROMPT</strong> · 自动写入四个数据库</div><div class="prompt-actions"><button class="btn-copy notion-copy" onclick="copyPrompt('pNotion',this)">🔗 复制 Notion Prompt</button></div></div>
+            <div class="prompt-content" id="pNotion">请将以上 JSON 按以下指引，通过 Notion MCP 写入对应数据库。严格按步骤顺序执行。
+
+=== Notion 数据库引用 ===
+L1 客户主档：<span class="notion-hi">243e940c-6498-802c-88f2-000b1aa67500</span>
+L2 营销策略方案库：<span class="notion-hi">eb95feba-3cd8-4d7c-9a1a-460c0de09f7c</span>
+受众画像库：<span class="notion-hi">ec3fcfc8-16d1-482b-81b6-429cf87c9e29</span>
+L3 执行记录库：<span class="notion-hi">03629c5c-6c78-4152-b0df-30177e098c15</span>
+
+=== 步骤一：更新 L1（如果 brand_dna 不为 null）===
+用 客户代号 = "<span class="var-hi">{{CLIENT_CODE}}</span>" 查找客户页面，更新：DNA完整度、品牌挑战摘要、最近更新日期、DNA版本（递增或填v1.0）、Extraction_Skill版本（填 Universal v1）
+如客户页面不存在，不要创建，告知需先手动建立。
+
+=== 步骤二：创建 L2 策略方案（如果 strategy 不为空）===
+每个 strategy 对象创建一条新记录：方案名称←plan_name、策略方向←strategy_direction、方案阶段←phase、核心目标←core_objective、目标受众←target_audience、关键信息←key_context、成功指标KPI←kpi、预算方向←budget_direction、备注←remarks、开始/结束/下次复盘日期←对应日期字段、最近更新←今天
+注意：关联客户（relation）需手动在 Notion 点选。
+
+=== 步骤三：创建受众画像（如果 audience_personas 不为空，且步骤二已完成）===
+每个对象创建一条新记录：画像名称←persona_name、人口特征←demographics、心理特征←psychographics、行为特征←behavioral_traits、核心痛点←core_pain_points、内容偏好←content_preferences、平台习惯←platform_habits[]（multi_select）、触达关键词←trigger_keywords、内容禁忌←content_taboos、画像来源←persona_source、完整度←completeness、备注←remarks
+注意：关联客户和关联策略（relation）需手动点选。
+
+=== 步骤四：创建 L3 执行记录（如果 topic_ideas 不为空）===
+每个对象创建一条新记录：内容/任务名称←title、内容主题←core_angle+" | 钩子："+audience_hook、执行类型←固定「选题」、执行状态←固定「待规划」、优先级←priority、月度批次←"<span class="var-hi">{{BATCH_NAME}}</span>"、所属月份←"<span class="var-hi">{{MONTH}}</span>"、来源会议←"<span class="var-hi">{{SOURCE_TYPE}}</span>·<span class="var-hi">{{DATE}}</span>"
+注意：关联客户（relation）需手动点选。
+
+=== 完成后回报 ===
+各步骤是否成功，每个数据库写入几条，哪些 relation 字段需手动处理。</div>
+          </div>
+          <div class="callout green"><div class="callout-label">✅ 完成标志</div>AI 回报操作摘要，显示每个数据库写入条数。relation 字段需手动点选是正常的。</div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',5)">🎉 存档完成！</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepA6" data-role="km">
+        <div class="step-header" onclick="toggleStep('A',6)"><div class="step-badge">7</div><div class="step-meta"><div class="step-title">Prompt B：追加更新（有历史记录时用）</div><div class="step-sub">合并新内容进旧档案，不覆盖</div></div><div class="step-tags"><span class="tag tag-km">Key Manager</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="callout red"><div class="callout-label">🚨 规则</div>不修改现有记录，只追加。如补充了现有画像信息，在该对象 remarks 注明「<span class="var-hi">{{DATE}}</span> 更新：[说明]」</div>
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>USER PROMPT B</strong> · 合并更新</div><div class="prompt-actions"><button class="btn-copy" onclick="copyPrompt('pUserB',this)">📋 复制</button></div></div>
+            <div class="prompt-content" id="pUserB">客户代号：<span class="var-hi">{{CLIENT_CODE}}</span>
+客户名称：<span class="var-hi">{{CLIENT_NAME}}</span>
+录入人员：<span class="var-hi">{{OPERATOR_NAME}}</span>
+更新日期：<span class="var-hi">{{DATE}}</span>
+记录来源：<span class="var-hi">{{SOURCE_TYPE}}</span>
+
+合并规则：不修改现有记录，只追加。如补充了现有画像信息，只更新对应字段并在 remarks 注明更新内容和日期。输出完整 JSON（含原有+新增数据）。严格只输出 JSON。
+
+=== 现有档案 JSON ===
+[粘贴旧 JSON]
+
+=== 新会议记录 ===
+[粘贴新会议记录]
+
+请输出合并后的完整 JSON，新增内容追加到对应数组末尾。</div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('A',6)">✓ 合并完成</button></div>
+        </div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 2: 月度选题生成 -->
+<!-- ══════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-topic">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressB"></div></div>
+  <div class="main-layout">
+    <nav class="sidebar" id="sidebarB">
+      <div class="sidebar-label">操作流程</div>
+      <div class="sidebar-link active" onclick="jumpStep('B',0)" id="sB0"><span class="step-num">1</span> 前置准备</div>
+      <div class="sidebar-link" onclick="jumpStep('B',1)" id="sB1"><span class="step-num">2</span> System Prompt</div>
+      <div class="sidebar-link" onclick="jumpStep('B',2)" id="sB2"><span class="step-num">3</span> User Prompt</div>
+      <div class="sidebar-link" onclick="jumpStep('B',3)" id="sB3"><span class="step-num">4</span> 审查 SOP</div>
+      <div class="sidebar-link" onclick="jumpStep('B',4)" id="sB4"><span class="step-num">5</span> 存入 Notion</div>
+      <div class="sidebar-label">突发情况</div>
+      <div class="sidebar-link" onclick="jumpStep('B',5)" id="sB5"><span class="step-num">6</span> 突发加题</div>
+    </nav>
+    <div class="content-area">
+      <div class="section-intro">
+        <h2>月度选题生成系统</h2>
+        <p>每月月初执行一次。从 Brand DNA 读取关键字段 + 填入本月参数，生成结构化选题，KM 审查后存入 Notion L3。</p>
+        <div class="phase-row">
+          <div class="phase-pill a"><div class="phase-dot"></div>每月月初</div>
+          <div class="phase-pill b"><div class="phase-dot"></div>Brand DNA ≥ 50%</div>
+          <div class="phase-pill c"><div class="phase-dot"></div>KM 审查后录入</div>
+        </div>
+      </div>
+      <div class="callout" style="margin-bottom:16px"><div class="callout-label">ℹ️ 与万能提取的区别</div>万能会议提取是<strong>被动整理</strong>（有开会才用）。月度选题生成是<strong>主动创造</strong>（每月主动执行）。两者不会混用。</div>
+      <div class="role-filter">
+        <span class="role-label">角色筛选：</span>
+        <button class="role-btn r-all" onclick="filterRole('all',this,'B')">全部</button>
+        <button class="role-btn" onclick="filterRole('km',this,'B')">Key Manager</button>
+        <button class="role-btn" onclick="filterRole('exec',this,'B')">执行同事</button>
+      </div>
+
+      <div class="step-group"><div class="step-card active" id="stepB0" data-role="all">
+        <div class="step-header" onclick="toggleStep('B',0)"><div class="step-badge">1</div><div class="step-meta"><div class="step-title">前置准备</div><div class="step-sub">从 Brand DNA 和 KM 处获取以下信息</div></div><div class="step-tags"><span class="tag tag-all">所有人</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="sop-list">
+            <div class="sop-item"><div class="sop-num">①</div><div class="sop-text"><strong>Brand Tone</strong>：从 brand_dna.brand_voice_tone 或 Notion L1「品牌口吻」读取</div></div>
+            <div class="sop-item"><div class="sop-num">②</div><div class="sop-text"><strong>Target Audience</strong>：从 brand_dna.target_audience_summary 或 Notion L1「主要受众」读取</div></div>
+            <div class="sop-item"><div class="sop-num">③</div><div class="sop-text"><strong>有效内容方向</strong>：从 brand_dna.content_strategy_hints 或 Notion L1 读取</div></div>
+            <div class="sop-item"><div class="sop-num">④</div><div class="sop-text"><strong>品牌禁区</strong>：从 brand_dna.no_go_zones 或 Notion L1 读取</div></div>
+            <div class="sop-item"><div class="sop-num">⑤</div><div class="sop-text"><strong>本月参数</strong>：向 Key Manager 确认本月策略方向、重点信息、所需选题数量</div></div>
+          </div>
+          <div class="callout red"><div class="callout-label">⚠️ 前提条件</div>Brand DNA 完整度必须 <strong>≥ 50%</strong>，否则先完成万能会议提取再回来。</div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('B',0)">✓ 信息已备齐</button><button class="btn-next" onclick="nextStep('B',0)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepB1" data-role="km">
+        <div class="step-header" onclick="toggleStep('B',1)"><div class="step-badge">2</div><div class="step-meta"><div class="step-title">System Prompt（设置一次）</div></div><div class="step-tags"><span class="tag tag-km">Key Manager</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>SYSTEM PROMPT</strong> · Content Topic Generator v2</div><div class="prompt-actions"><button class="btn-copy" onclick="copyPrompt('pTopicSys',this)">📋 复制</button></div></div>
+            <div class="prompt-content" id="pTopicSys">你是 Brandid 内容策略师，专门为马来西亚中小型品牌（大健康、美容、wellness 行业为主）设计社交媒体内容选题。
+
+工作原则：
+1. 所有选题必须服务于品牌商业目标，而非单纯追求流量
+2. 选题必须真实反映品牌口吻，绝不能违反品牌禁区
+3. 每个选题必须有清晰的受众视角——她/他为什么会停下来看这条内容？
+4. 优先生成可复用的内容框架，而非一次性话题
+5. 马来西亚华人市场语境：中文为主，偶有中英混搭符合本地习惯
+
+每条选题输出：编号（T-001起）、选题标题（中文）、内容形式（Reel/Carousel/Static/Story）、核心角度、受众钩子、内容方向标签（教育型/展示型/互动型/促销型/品牌故事型）、优先级（🔴重点推/🟡常规）、禁区检查（✓通过/✗注意）
+
+生成完毕后额外输出：内容形式配比统计、质量自评（1-10分）和改进建议。</div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('B',1)">✓ 已设置</button><button class="btn-next" onclick="nextStep('B',1)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepB2" data-role="exec">
+        <div class="step-header" onclick="toggleStep('B',2)"><div class="step-badge">3</div><div class="step-meta"><div class="step-title">User Prompt（每月执行）</div></div><div class="step-tags"><span class="tag tag-exec">执行同事</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>USER PROMPT</strong> · Monthly Topic Generation v2</div><div class="prompt-actions"><button class="btn-copy" onclick="copyPrompt('pTopicUser',this)">📋 复制</button></div></div>
+            <div class="prompt-content" id="pTopicUser">客户：<span class="var-hi">{{CLIENT_CODE}}</span> | 月份：<span class="var-hi">{{MONTH}}</span> | 批次：<span class="var-hi">{{BATCH_NAME}}</span> | 操作人：<span class="var-hi">{{OPERATOR_NAME}}</span>
+
+品牌口吻：<span class="var-hi">{{BRAND_TONE}}</span>
+目标受众：<span class="var-hi">{{TARGET_AUDIENCE}}</span>
+有效内容方向：<span class="var-hi">{{CONTENT_THEMES_THAT_WORK}}</span>
+品牌禁区：<span class="var-hi">{{BRAND_NO_GO_ZONES}}</span>
+
+策略方向：<span class="var-hi">{{STRATEGY_DIRECTION}}</span>
+本月重点：<span class="var-hi">{{MONTHLY_KEY_MESSAGES}}</span>
+选题数量：<span class="var-hi">{{TOPIC_COUNT}}</span>
+
+内容配比：Reel 50% · Carousel 30% · Static 15% · Story 5%
+类型配比：教育型30% · 展示型25% · 品牌故事20% · 互动型15% · 促销型10%
+
+要求：严格遵守禁区并标注检查结果；前3条紧扣本月重点；按内容形式交叉排列；每条提供受众钩子。
+
+请开始生成。</div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('B',2)">✓ 已生成</button><button class="btn-next" onclick="nextStep('B',2)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepB3" data-role="km">
+        <div class="step-header" onclick="toggleStep('B',3)"><div class="step-badge">4</div><div class="step-meta"><div class="step-title">审查 SOP（对照模块 C 审查框架）</div></div><div class="step-tags"><span class="tag tag-km">Key Manager</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="callout purple"><div class="callout-label">🔗 参照</div>审查标准请参考 <strong>「KM 工作准则 · 模块 C」</strong>——五个问题，全部 ✓ 才能提交。</div>
+          <div class="sop-list">
+            <div class="sop-item"><div class="sop-num">1</div><div class="sop-text"><strong>禁区合规</strong>：逐条检查，任何 ✗ 必须修改或删除</div></div>
+            <div class="sop-item"><div class="sop-num">2</div><div class="sop-text"><strong>策略对齐</strong>：至少 3 条直接呼应本月策略方向</div></div>
+            <div class="sop-item"><div class="sop-num">3</div><div class="sop-text"><strong>配比核查</strong>：Reel 不少于总数 40%</div></div>
+            <div class="sop-item"><div class="sop-num">4</div><div class="sop-text"><strong>受众视角</strong>：随机抽 5 条代入目标受众身份测试</div></div>
+            <div class="sop-item"><div class="sop-num">5</div><div class="sop-text"><strong>批准标注</strong>：注明「KM 已审查」和日期</div></div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('B',3)">✓ 审查完成</button><button class="btn-next" onclick="nextStep('B',3)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepB4" data-role="exec">
+        <div class="step-header" onclick="toggleStep('B',4)"><div class="step-badge">5</div><div class="step-meta"><div class="step-title">存入 Notion L3</div></div><div class="step-tags"><span class="tag tag-exec">执行同事</span><span class="tag tag-notion">Notion MCP</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>NOTION 导入 PROMPT</strong> · 月度选题写入 L3</div><div class="prompt-actions"><button class="btn-copy notion-copy" onclick="copyPrompt('pTopicNotion',this)">🔗 复制</button></div></div>
+            <div class="prompt-content" id="pTopicNotion">请将以上月度选题，通过 Notion MCP 批量写入 L3 执行记录库。
+
+L3 执行记录库：<span class="notion-hi">03629c5c-6c78-4152-b0df-30177e098c15</span>
+L1 客户主档（查找客户用）：<span class="notion-hi">243e940c-6498-802c-88f2-000b1aa67500</span>
+
+字段映射：
+- 内容/任务名称 ← 选题标题
+- 内容主题 ← 核心角度 + " | 受众钩子：" + 受众钩子
+- 核心信息 ← 内容方向标签
+- 执行类型 ← 固定「选题」
+- 执行状态 ← 固定「待规划」
+- 优先级 ← 前3条「🔴重点推」，其余「🟡常规」
+- 月度批次 ← "<span class="var-hi">{{BATCH_NAME}}</span>"
+- 所属月份 ← "<span class="var-hi">{{MONTH}}</span>"
+- 来源会议 ← "月度选题生成·<span class="var-hi">{{OPERATOR_NAME}}</span>"
+- 审查备注 ← 禁区检查结果
+
+注意：关联客户（relation）需在 Notion 界面手动点选。完成后回报写入条数和需手动处理的字段。</div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('B',4)">✓ 已写入</button><button class="btn-next" onclick="nextStep('B',4)">下一步 →</button></div>
+        </div></div>
+      </div></div>
+
+      <div class="step-group"><div class="step-card" id="stepB5" data-role="km">
+        <div class="step-header" onclick="toggleStep('B',5)"><div class="step-badge">6</div><div class="step-meta"><div class="step-title">突发加题处理</div></div><div class="step-tags"><span class="tag tag-km">Key Manager</span></div><div class="step-toggle">▶</div></div>
+        <div class="step-body"><div class="step-body-inner">
+          <div class="sop-list">
+            <div class="sop-item"><div class="sop-num">①</div><div class="sop-text"><strong>先检查禁区</strong>：有冲突必须向客户解释再执行</div></div>
+            <div class="sop-item"><div class="sop-num">②</div><div class="sop-text"><strong>快速生成</strong>：发送以下 Prompt 生成 1-3 条选题</div></div>
+            <div class="sop-item"><div class="sop-num">③</div><div class="sop-text"><strong>编号规则</strong>：突发选题用 T-E01、T-E02（E=Emergency）</div></div>
+            <div class="sop-item"><div class="sop-num">④</div><div class="sop-text"><strong>录入 Notion</strong>：优先级填「⚡突发加题」，备注触发原因</div></div>
+          </div>
+          <div class="prompt-block">
+            <div class="prompt-header"><div class="prompt-label"><strong>快速加题 PROMPT</strong></div><div class="prompt-actions"><button class="btn-copy" onclick="copyPrompt('pEmerg',this)">📋 复制</button></div></div>
+            <div class="prompt-content" id="pEmerg">紧急补充选题。客户：<span class="var-hi">{{CLIENT_CODE}}</span> | 口吻：<span class="var-hi">{{BRAND_TONE}}</span> | 禁区：<span class="var-hi">{{BRAND_NO_GO_ZONES}}</span>
+突发主题：[填入主题]
+截止需求：[需要几小时内]
+请生成 1-3 条选题，编号从 T-E01 开始，标注禁区检查结果。</div>
+          </div>
+          <div class="step-footer"><button class="btn-done" onclick="doneStep('B',5)">🎉 本月全部完成！</button></div>
+        </div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Variables
+function toggleVars(){
+  const g=document.getElementById('varsGrid'),c=document.getElementById('varsChevron'),
+    h=document.getElementById('varsHint'),b=document.getElementById('varsApplyBtn'),
+    sh=document.querySelector('.section-header'),open=g.classList.contains('open');
+  g.classList.toggle('open',!open);c.classList.toggle('open',!open);
+  sh.classList.toggle('open',!open);b.classList.toggle('open',!open);
+  h.textContent=open?'展开填写':'折叠';
+}
+function getVars(){
+  const keys=['CLIENT_CODE','CLIENT_NAME','OPERATOR_NAME','DATE','SOURCE_TYPE','MONTH',
+    'BATCH_NAME','STRATEGY_DIRECTION','TOPIC_COUNT','MONTHLY_KEY_MESSAGES','BRAND_TONE',
+    'TARGET_AUDIENCE','CONTENT_THEMES_THAT_WORK','BRAND_NO_GO_ZONES'];
+  const m={};
+  keys.forEach(k=>{const el=document.getElementById('v_'+k);m[k]=el&&el.value.trim()?el.value.trim():'{{'+k+'}}';});
+  return m;
+}
+function applyVars(){
+  const btn=document.getElementById('varsApplyBtn');
+  btn.textContent='✓ 已套用！';
+  setTimeout(()=>{btn.innerHTML='✦ 套用到所有 Prompt';},1800);
+}
+function copyPrompt(id,btn){
+  const vars=getVars();
+  let text=document.getElementById(id)?.innerText||'';
+  Object.entries(vars).forEach(([k,v])=>{text=text.replaceAll('{{'+k+'}}',v);});
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.textContent;btn.textContent='✓ 已复制！';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const orig=btn.textContent;btn.textContent='✓ 已复制！';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+  });
+}
+// Tabs
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+// Steps
+const states={KM:{done:[false,false,false],total:3},A:{done:new Array(7).fill(false),total:7},B:{done:new Array(6).fill(false),total:6}};
+function toggleStep(tab,idx){const c=document.getElementById('step'+tab+idx);c.classList.toggle('active',!c.classList.contains('active'));}
+function doneStep(tab,idx){
+  states[tab].done[idx]=true;
+  const c=document.getElementById('step'+tab+idx);
+  c.classList.add('done');c.classList.remove('active');
+  updateSidebar(tab);updateProgress(tab);
+}
+function nextStep(tab,idx){
+  const c=document.getElementById('step'+tab+idx),n=document.getElementById('step'+tab+(idx+1));
+  if(!n) return;
+  c.classList.remove('active');n.classList.add('active');
+  setTimeout(()=>n.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  updateSidebar(tab);
+}
+function jumpStep(tab,idx){
+  const c=document.getElementById('step'+tab+idx);
+  if(c){c.classList.add('active');c.scrollIntoView({behavior:'smooth',block:'start'});}
+  document.querySelectorAll('#sidebar'+tab+' .sidebar-link').forEach((l,i)=>l.classList.toggle('active',i===idx));
+}
+function updateSidebar(tab){
+  states[tab].done.forEach((done,i)=>{
+    if(!done) return;
+    const l=document.querySelector('#sidebar'+tab+' .sidebar-link:nth-child('+(i+2)+')');
+    if(l){l.classList.add('done');l.classList.remove('active');const n=l.querySelector('.step-num');if(n)n.textContent='✓';}
+  });
+}
+function updateProgress(tab){
+  const st=states[tab];
+  const pct=Math.round(st.done.filter(Boolean).length/st.total*100);
+  const bar=document.getElementById('progress'+tab);
+  if(bar)bar.style.width=pct+'%';
+}
+// Role filter
+function filterRole(role,btn,tab){
+  btn.closest('.role-filter').querySelectorAll('.role-btn').forEach(b=>b.className='role-btn');
+  if(role==='all')btn.classList.add('r-all');
+  else if(role==='km')btn.classList.add('r-km');
+  else btn.classList.add('r-exec');
+  const panel=document.getElementById(tab==='KM'?'panel-km':tab==='A'?'panel-meeting':'panel-topic');
+  panel.querySelectorAll('.step-card').forEach(card=>{
+    const cr=card.dataset.role||'all';
+    card.closest('.step-group').classList.toggle('hidden',!(role==='all'||cr==='all'||cr===role));
+  });
+}
+// Checklist
+function toggleCheck(item){
+  item.classList.toggle('checked');
+  const box=item.querySelector('.check-box');
+  box.textContent=item.classList.contains('checked')?'✓':'';
+  checkGateUpdate();
+}
+function checkGateUpdate(){
+  const items=document.querySelectorAll('#checklistA .check-item');
+  const checked=[...items].filter(i=>i.classList.contains('checked')).length;
+  const unchecked=items.length-checked;
+  const gate=document.getElementById('checkGate'),pass=document.getElementById('checkPass');
+  if(unchecked>2){gate.style.display='flex';pass.style.display='none';}
+  else if(checked>=4){gate.style.display='none';pass.style.display='flex';}
+  else{gate.style.display='none';pass.style.display='none';}
+}
+// Init
+document.addEventListener('DOMContentLoaded',()=>{
+  const today=new Date().toISOString().split('T')[0];
+  const di=document.getElementById('v_DATE');
+  if(di&&!di.value)di.value=today;
+});
+</script>
+</body>
+</html>
